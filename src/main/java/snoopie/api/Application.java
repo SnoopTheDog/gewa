@@ -79,6 +79,7 @@ public class Application
 		FeatureCollection fc = null;
 		List<Feature> features = null;
 
+		// Not sure if it even helps
 		try 
 		{
 			 fc = om.readValue(new URL(par[0]), 
@@ -96,6 +97,7 @@ public class Application
 		{
 			System.out.println("[ERR]");
 			e.printStackTrace();
+			return "[ERR] failed to retrieve quake data";
 		}
 
 		String result = null;
