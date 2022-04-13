@@ -32,7 +32,8 @@ public class Application
 {
 	// Reuse objmapper
 	private static ObjectMapper om = new ObjectMapper();
-	static String weatherKey = "72b390c3c9e77e7a8590daa3ecb56003";
+	@Value("$weatherApiKey")
+	static String weatherKey;
 
 	public static void main(String[] args) 
 	{
