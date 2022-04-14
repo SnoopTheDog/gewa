@@ -1,5 +1,7 @@
 ## Getting Started
 
+Requires ```weatherApiKey``` key defined in ```src/resources/properties/application.properties```.
+
 To run: ```mvn clean spring-boot:run ```
 
 Defined endpoints:

@@ -68,6 +68,10 @@ public class Application
 
 	public static String getWeather(double lat, double lon) throws Exception 
 	{
+		// If weatherApiKey is not defined in application.properties
+		if (weatherKey == null) 
+			return "err_missing_weather_key";
+
 		String url = "https://api.openweathermap.org/data/2.5/weather?lat="
 				+ lat + "&lon="
 				+ lon + "&type=hour&appid=" + weatherKey;
