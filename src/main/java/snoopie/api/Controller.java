@@ -1,5 +1,7 @@
 package snoopie.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,15 +48,15 @@ public class Controller {
 	}
 
 	@GetMapping("/statistika/klici")
-	String getCalls()
+	String getCalls() throws JsonProcessingException
 	{
-		return "ApiCallCount: " + String.valueOf(Analytics.apiCallCount);
+		return Application.om.writeValueAsString(Analytics.apiCallCount);
 	}
 
 	@GetMapping("/statistika/avg")
-	String getTime()
+	String getTime() throws JsonProcessingException
 	{
-		return "AvgResponseTime in Millis: " 
-		+ String.valueOf(Analytics.getAvgResponseTime());
+
+		return Application.om.writeValueAsString(Analytics.getAvgResponseTime());
 	}
 }

@@ -17,21 +17,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.*;
 import org.geojson.Point;
 import org.geojson.FeatureCollection;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /* Should or should I not */
-class IncomingJson 
+class outJSON 
 {
+	boolean success;
+	String general_message;
 
+	String place;
+	long time;
+
+	double lat;
+	double lon;
+	double alt;
+	double mag;
+	
+	String weather;
 }
 
 @SpringBootApplication
 public class Application 
 {
 	// Reuse objmapper
-	private static ObjectMapper om = new ObjectMapper();
+	public static ObjectMapper om = new ObjectMapper();
+	
 	@Value("$weatherApiKey")
 	static String weatherKey;
 
@@ -77,6 +89,8 @@ public class Application
 		if (par.length > 1)
 			timeFlag = true;
 
+		outJSON result = new outJSON();
+
 		FeatureCollection fc = null;
 		List<Feature> features = null;
 
@@ -91,17 +105,25 @@ public class Application
 			}
 			else {
 				System.out.println("[ERR] failed to retrieve quake data");
-				return "Failed to get quake data";
+				
+				result.success = false;
+				result.general_message = "Failed to get quake data";
+				
+				return om.writeValueAsString(result);
 			}
 		} 
 		catch (Exception e) 
 		{
 			System.out.println("[ERR]");
 			e.printStackTrace();
-			return "[ERR] failed to retrieve quake data";
+			
+			result.success = false;
+			result.general_message = "Failed to get quake data";
+
+			return om.writeValueAsString(result);
 		}
 
-		String result = null;
+		
 		String place = null;
 		double mag = -1.0f;
 		LngLatAlt geo = null;
@@ -133,18 +155,17 @@ public class Application
 			geo = grr;
 		}
 
-		result = "\nLocation: " + place
-				+ "\nLatitude: " + geo.getLatitude()
-				+ "\nLongitude: " + geo.getLongitude()
-				+ "\nAltitude: " + geo.getAltitude()
-				+ "\nMagnitude: " + mag
-				+ "\nTime: " + time
-				+ "\nWeather: " 
-				+ getWeather(geo.getLatitude(), geo.getLongitude());
+		result.place = place;
+		result.time = time;
+		result.lat = geo.getLatitude();
+		result.lon = geo.getLongitude();
+		result.lat = geo.getLatitude();
+		result.mag = mag;
+		result.weather = getWeather(result.lat, result.lon);
 
 		System.out.println(result);
 
-		return result;
+		return om.writeValueAsString(result);
 	}
 
 	// ISO8601 Date/Time format
@@ -174,6 +195,7 @@ public class Application
 				.build();
 
 		HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+		
 
 		return response.body();
 	}
