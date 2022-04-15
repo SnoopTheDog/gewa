@@ -11,12 +11,12 @@ public class Controller {
 	@GetMapping("/potresi/rekordi/tedenski")
 	String quakeRecordWeek() throws Exception 
 	{
-		Analytics.startClock();
+		long start = Analytics.startClock();
 		
 		String url = Application.generateQuakeUrl(Application.weekAgoDate());
 		String returnee = Application.getHighestMagQuake(url);
 		
-		Analytics.stopClock();
+		Analytics.stopClock(start);
 		
 		return returnee;
 	}
@@ -24,12 +24,12 @@ public class Controller {
 	@GetMapping("/potresi/rekordi/mesecni")
 	String quakeRecordMonth() throws Exception 
 	{
-		Analytics.startClock();
+		long start = Analytics.startClock();
 
 		String url = Application.generateQuakeUrl(Application.monthAgoDate());
 		String res = Application.getHighestMagQuake(url);
 
-		Analytics.stopClock();
+		Analytics.stopClock(start);
 		
 		return res;
 	}
@@ -37,12 +37,12 @@ public class Controller {
 	@GetMapping("/potresi/zadnji")
 	String quakeLast() throws Exception 
 	{
-		Analytics.startClock();
+		long start = Analytics.startClock();
 
 		String url = Application.generateQuakeUrl("");
 		String res = Application.getHighestMagQuake(url, "nyahaha");
 		
-		Analytics.stopClock();
+		Analytics.stopClock(start);
 		
 		return res;
 	}

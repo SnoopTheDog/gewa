@@ -24,18 +24,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /* Should or should I not */
 class outJSON 
 {
-	boolean success;
-	String general_message;
+	public int code;
 
-	String place;
-	long time;
+	public String place;
+	public long time;
 
-	double lat;
-	double lon;
-	double alt;
-	double mag;
+	public double lat;
+	public double lon;
+	public double alt;
+	public double mag;
 	
-	String weather;
+	public String weather;
 }
 
 @SpringBootApplication
@@ -54,23 +53,11 @@ public class Application
 		System.out.println("Application started");
 	}
 
-	// Maybe next time
-	public static <T> T getNestles(Map map, String... keys) 
-	{
-		Object val = map;
-
-		for (String key : keys) {
-			val = ((Map) val).get(key);
-		}
-
-		return (T) val;
-	}
-
 	public static String getWeather(double lat, double lon) throws Exception 
 	{
 		// If weatherApiKey is not defined in application.properties
 		if (weatherKey == null) 
-			return "err_missing_weather_key";
+			return "missing_weather_key";
 
 		String url = "https://api.openweathermap.org/data/2.5/weather?lat="
 				+ lat + "&lon="
@@ -86,7 +73,6 @@ public class Application
 		return donzo.get("main");
 	}
 
-	// Too many objects for my taste
 	public static String getHighestMagQuake(String... par) throws Exception
 	{
 		boolean timeFlag = false;
@@ -109,9 +95,7 @@ public class Application
 			}
 			else {
 				System.out.println("[ERR] failed to retrieve quake data");
-				
-				result.success = false;
-				result.general_message = "Failed to get quake data";
+				result.code = 502;
 				
 				return om.writeValueAsString(result);
 			}
@@ -120,9 +104,7 @@ public class Application
 		{
 			System.out.println("[ERR]");
 			e.printStackTrace();
-			
-			result.success = false;
-			result.general_message = "Failed to get quake data";
+			result.code = 502;
 
 			return om.writeValueAsString(result);
 		}
@@ -167,7 +149,9 @@ public class Application
 		result.mag = mag;
 		result.weather = getWeather(result.lat, result.lon);
 
-		System.out.println(result);
+		if (result.weather == "missing_weather_key")
+			result.code = 500;
+		result.code = 200;
 
 		return om.writeValueAsString(result);
 	}
@@ -189,18 +173,5 @@ public class Application
 			"https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="
 			+ starttime;
 		return url;
-	}
-
-	public static String getBodyFromUrl(String url) throws Exception 
-	{
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.build();
-
-		HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-		
-
-		return response.body();
 	}
 }

@@ -23,9 +23,6 @@ public class Analytics
 	static long apiCallCount = 0;
 	static long totalResponseTime = 0;
 	
-	private static long clockStart;
-	private static long clockEnd;
-	
 	static void init()
 	{
 		//,,,
@@ -36,15 +33,20 @@ public class Analytics
 		return (totalResponseTime/apiCallCount);
 	}
 
-	static void startClock()
+	static long startClock()
 	{
-		clockStart = System.currentTimeMillis();
+		return System.currentTimeMillis();
 	}
 
-	static void stopClock()
+	static void measure()
 	{
-		clockEnd = System.currentTimeMillis();
+
+	}
+
+	static void stopClock(long start)
+	{
+		long end = System.currentTimeMillis();
 		apiCallCount += 1;
-		totalResponseTime += (clockEnd - clockStart);
+		totalResponseTime += (end - start);
 	}
 }
